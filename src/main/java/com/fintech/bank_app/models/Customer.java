@@ -3,9 +3,14 @@ package com.fintech.bank_app.models;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +21,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Customer {
+public class Customer implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,19 +29,55 @@ public class Customer {
 
     private String firstName;
     private String lastName;
-    private LocalDate dateOfBirth;   
+    private LocalDate dateOfBirth;
     private String email;
     private String phoneNumber;
     private String address;
     private String accountType;
     private String accountNumber;
     private BigDecimal accountBalance;
+    private String password;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Override
+    public String getUsername() {
+        return this.accountNumber;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     @PrePersist
     private void prePersist() {
@@ -54,5 +95,4 @@ public class Customer {
             this.createdAt = LocalDateTime.now();
         }
     }
-
 }
