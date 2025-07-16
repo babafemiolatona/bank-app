@@ -9,5 +9,6 @@ import com.fintech.bank_app.models.Customer;
 public interface CustomerDao extends JpaRepository<Customer, Long> {
 
     Optional<Customer> findByAccountNumber(String accountNumber);
+    Optional<Customer> findByEmail(String email);
 
 }

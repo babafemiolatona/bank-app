@@ -9,9 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Data
-public class RegisterDto {
-
-    private Long id;
+public class CreateCustomerDto {
 
     @NotBlank(message = "First name is required")
     private String firstName;
@@ -28,9 +26,15 @@ public class RegisterDto {
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
+    @NotBlank(message = "Address is required")
     private String address;
+
+    @NotBlank(message = "Account type is required")
+    private String accountType;
+    
 
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
+
 
 }
