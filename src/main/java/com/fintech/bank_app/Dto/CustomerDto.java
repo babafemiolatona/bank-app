@@ -1,6 +1,7 @@
 package com.fintech.bank_app.Dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 
@@ -16,5 +17,7 @@ public class CustomerDto {
     private String address;
     private String accountType;
     private String accountNumber;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 }

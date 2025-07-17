@@ -12,6 +12,7 @@ import com.fintech.bank_app.Dao.TransactionDao;
 import com.fintech.bank_app.Dto.ApiResponse;
 import com.fintech.bank_app.Dto.TransferRequest;
 import com.fintech.bank_app.exceptions.InsufficientBalanceException;
+import com.fintech.bank_app.exceptions.InvalidTransferException;
 import com.fintech.bank_app.exceptions.ResourceNotFoundException;
 import com.fintech.bank_app.models.Customer;
 import com.fintech.bank_app.models.Transaction;
@@ -28,6 +29,11 @@ public class TransferService {
 
     @Transactional
     public ApiResponse transferFunds(TransferRequest request, Customer sender) {
+
+        if (sender.getAccountNumber().equals(request.getAccountNumber())) {
+            throw new InvalidTransferException("Cannot transfer to the same account");
+        }
+
         Customer recipient = customerDao.findByAccountNumber(request.getAccountNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Recipient not found"));
 

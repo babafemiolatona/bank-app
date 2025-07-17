@@ -16,7 +16,7 @@ import com.fintech.bank_app.service.TransferService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/transfer")
+@RequestMapping("/api/v1/transfer")
 public class TransferController {
 
     @Autowired
