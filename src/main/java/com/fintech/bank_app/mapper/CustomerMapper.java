@@ -16,6 +16,7 @@ public class CustomerMapper {
         dto.setPhoneNumber(customer.getPhoneNumber());
         dto.setAddress(customer.getAddress());
         dto.setAccountNumber(customer.getAccountNumber());
+        dto.setAccountType(customer.getAccountType());
         
         return dto;
     }
@@ -28,6 +29,7 @@ public class CustomerMapper {
         customer.setEmail(dto.getEmail());
         customer.setPhoneNumber(dto.getPhoneNumber());
         customer.setAddress(dto.getAddress());
+        customer.setAccountType(dto.getAccountType());
         return customer;
     }
 
