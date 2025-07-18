@@ -1,6 +1,5 @@
 package com.fintech.bank_app.controller;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fintech.bank_app.Dto.ApiResponse;
+import com.fintech.bank_app.Dto.BalanceResponse;
 import com.fintech.bank_app.Dto.CreateCustomerDto;
 import com.fintech.bank_app.Dto.LoginRequest;
 import com.fintech.bank_app.Dto.LoginResponse;
@@ -54,7 +54,7 @@ public class CustomerController {
 
     @GetMapping("/me/balance")
     public ResponseEntity<ApiResponse> checkBalance(@AuthenticationPrincipal Customer customer){
-        BigDecimal balance = customerService.getBalance(customer);
+        BalanceResponse balance = customerService.getBalance(customer);
         ApiResponse response = new ApiResponse(true, "Current balance retrieved successfully", balance);
         return ResponseEntity.ok(response);
     }

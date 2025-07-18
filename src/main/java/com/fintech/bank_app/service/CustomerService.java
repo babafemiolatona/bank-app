@@ -22,6 +22,7 @@ import com.fintech.bank_app.exceptions.UserAlreadyExistsException;
 import com.fintech.bank_app.mapper.CustomerMapper;
 import com.fintech.bank_app.models.Customer;
 import com.fintech.bank_app.Dto.ApiResponse;
+import com.fintech.bank_app.Dto.BalanceResponse;
 
 @Service
 public class CustomerService {
@@ -67,7 +68,11 @@ public class CustomerService {
         }
     }
 
-    public BigDecimal getBalance(Customer customer) {
-        return customer.getAccountBalance();
+    public BalanceResponse getBalance(Customer customer) {
+        return new BalanceResponse(
+            customer.getAccountNumber(),
+            customer.getAccountType(),
+            customer.getAccountBalance()
+        );
     }
 }
