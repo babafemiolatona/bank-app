@@ -1,5 +1,7 @@
 package com.fintech.bank_app.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -63,5 +65,9 @@ public class CustomerService {
         } catch (AuthenticationException ex) {
             throw new InvalidCredentialsException("Authentication failed: " + ex.getMessage());
         }
+    }
+
+    public BigDecimal getBalance(Customer customer) {
+        return customer.getAccountBalance();
     }
 }
