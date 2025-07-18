@@ -20,6 +20,9 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private CustomAuthEntryPoint authenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -35,6 +38,9 @@ public class SecurityConfig {
             
             ).permitAll()
             .anyRequest().authenticated()
+            .and()
+            .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
             .and()
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
