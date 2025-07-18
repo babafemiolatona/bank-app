@@ -7,6 +7,7 @@ public class TransactionMapper {
 
     public static TransactionDto toDto(Transaction tx) {
         TransactionDto dto = new TransactionDto();
+        dto.setId(tx.getId());
         dto.setType(tx.getType());
         dto.setAmount(tx.getAmount());
         dto.setDescription(tx.getDescription());
