@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.fintech.bank_app.Dao.AdminDao;
 import com.fintech.bank_app.Dao.CustomerDao;
 
 @Service
@@ -14,6 +15,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private CustomerDao customerDao;
+
+    @Autowired
+    private AdminDao adminDao;
 
     // @Override
     // public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -30,6 +34,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return customerDao.findByEmail(email)
+            .map(user -> (UserDetails) user)
+            .or(() -> adminDao.findByEmail(email).map(user -> (UserDetails) user))
             .orElseThrow(() ->
                 new UsernameNotFoundException("Customer not found with email: " + email));
     }

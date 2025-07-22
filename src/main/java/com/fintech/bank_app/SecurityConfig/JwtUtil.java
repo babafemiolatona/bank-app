@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,15 @@ public class JwtUtil {
     private String secretKey;
 
     public String generateToken(UserDetails userDetails) {
+
+        String role = userDetails.getAuthorities().stream()
+            .findFirst()
+            .map(GrantedAuthority::getAuthority)
+            .orElse("ROLE_CUSTOMER");
+
         return Jwts.builder()
             .setSubject(userDetails.getUsername())
+            .claim("role", role)
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
             .signWith(SignatureAlgorithm.HS256, Base64.getDecoder().decode(secretKey))
@@ -31,6 +39,14 @@ public class JwtUtil {
             .parseClaimsJws(token)
             .getBody()
             .getSubject();
+    }
+
+    public String extractRole(String token) {
+        return Jwts.parser()
+            .setSigningKey(Base64.getDecoder().decode(secretKey))
+            .parseClaimsJws(token)
+            .getBody()
+            .get("role", String.class);
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {

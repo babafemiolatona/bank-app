@@ -32,11 +32,16 @@ public class SecurityConfig {
                 "/api/v1/auth/**",
                 "/api/v1/customers/register",
                 "/api/v1/customers/login",
+                "/api/v1/admins/register",
                 "v3/api-docs/**",
                 "swagger-ui/**",
                 "swagger-ui.html"
             
             ).permitAll()
+
+            .requestMatchers("/api/v1/admins/**").hasRole("ADMIN")
+            .requestMatchers("/api/v1/customers/**").hasRole("CUSTOMER")
+
             .anyRequest().authenticated()
             .and()
             .exceptionHandling()
