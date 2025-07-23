@@ -5,10 +5,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fintech.bank_app.Dto.ApiResponse;
 import com.fintech.bank_app.Dto.CustomerDto;
 import com.fintech.bank_app.Dto.UpdateCustomerDto;
 import com.fintech.bank_app.mapper.CustomerMapper;
@@ -54,5 +57,11 @@ public class AdminCustomerController {
         Customer updatedCustomer = customerService.updateCustomer(id, updateDto, admin);
         CustomerDto dto = CustomerMapper.toDto(updatedCustomer);
         return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ApiResponse> deleteCustomer(@PathVariable Long id, @AuthenticationPrincipal Admin admin) {
+        customerService.deleteCustomer(id, admin);
+        return ResponseEntity.ok(new ApiResponse(true, "Customer deleted successfully"));
     }
 }

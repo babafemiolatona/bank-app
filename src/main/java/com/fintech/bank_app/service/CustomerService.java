@@ -39,4 +39,10 @@ public class CustomerService {
         return customerDao.save(customer);
     }
 
+    public void deleteCustomer(Long id, Admin admin) {
+        Customer customer = customerDao.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + id));
+            
+        customerDao.delete(customer);
+    }
 }
