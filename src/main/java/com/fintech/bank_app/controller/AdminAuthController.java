@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fintech.bank_app.Dto.AdminRegisterRequest;
 import com.fintech.bank_app.Dto.ApiResponse;
-import com.fintech.bank_app.service.AdminService;
+import com.fintech.bank_app.service.AdminAuthService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/admins")
-public class AdminController {
+public class AdminAuthController {
 
     @Autowired
-    private AdminService adminService;
+    private AdminAuthService adminAuthService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerAdmin(@Valid @RequestBody AdminRegisterRequest request) {
-        ApiResponse response = adminService.registerAdmin(request);
+        ApiResponse response = adminAuthService.registerAdmin(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

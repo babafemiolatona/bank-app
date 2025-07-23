@@ -23,7 +23,7 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
-        ApiResponse errorResponse = new ApiResponse(false, "Invalid email or password");
+        ApiResponse errorResponse = new ApiResponse(false, "Unauthorized");
         response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 }
