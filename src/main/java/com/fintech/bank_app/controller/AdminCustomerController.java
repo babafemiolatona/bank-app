@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fintech.bank_app.Dto.ApiResponse;
 import com.fintech.bank_app.Dto.CustomerDto;
+import com.fintech.bank_app.Dto.TransactionDto;
 import com.fintech.bank_app.Dto.UpdateCustomerDto;
 import com.fintech.bank_app.mapper.CustomerMapper;
+import com.fintech.bank_app.mapper.TransactionMapper;
 import com.fintech.bank_app.models.Admin;
 import com.fintech.bank_app.models.Customer;
 import com.fintech.bank_app.service.CustomerService;
+import com.fintech.bank_app.service.TransactionService;
 
 import jakarta.validation.Valid;
 
@@ -31,6 +34,9 @@ public class AdminCustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @GetMapping
     public ResponseEntity<List<CustomerDto>> getAllCustomers(@AuthenticationPrincipal Admin admin) {
@@ -47,6 +53,16 @@ public class AdminCustomerController {
         Customer customer = customerService.getCustomerById(id, admin);
         CustomerDto dto = CustomerMapper.toDto(customer);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("{id}/transactions")
+    public ResponseEntity<List<TransactionDto>> getCustomerTransactions(@PathVariable Long id, @AuthenticationPrincipal Admin admin) {
+        List<TransactionDto> transactions = transactionService.getTransactionsByCustomerId(id, admin)
+            .stream()
+            .map(TransactionMapper::toDto)
+            .toList();
+
+        return ResponseEntity.ok(transactions);
     }
 
     @PatchMapping("{id}")

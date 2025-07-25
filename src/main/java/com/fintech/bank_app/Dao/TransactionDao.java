@@ -12,5 +12,6 @@ import com.fintech.bank_app.models.Transaction;
 public interface TransactionDao extends JpaRepository<Transaction, Long> {
 
     List<Transaction> findByCustomerOrderByTimestampDesc(Customer customer);
+    List<Transaction> findByCustomerIdOrderByTimestampDesc(Customer customer);
     
 }
