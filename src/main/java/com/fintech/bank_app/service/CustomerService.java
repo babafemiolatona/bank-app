@@ -1,8 +1,9 @@
 package com.fintech.bank_app.service;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.fintech.bank_app.Dao.CustomerDao;
@@ -17,8 +18,8 @@ public class CustomerService {
     @Autowired
     private CustomerDao customerDao;
 
-    public List<Customer> getAllCustomers(Admin admin) {
-        return customerDao.findAll();
+    public Page<Customer> getAllCustomers(Admin admin, Pageable pageable) {
+        return customerDao.findAll(pageable);
     }
 
     public Customer getCustomerById(Long id, Admin admin) {

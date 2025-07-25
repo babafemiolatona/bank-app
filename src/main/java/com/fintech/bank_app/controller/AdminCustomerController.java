@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fintech.bank_app.Dto.ApiResponse;
@@ -19,13 +20,17 @@ import com.fintech.bank_app.mapper.CustomerMapper;
 import com.fintech.bank_app.mapper.TransactionMapper;
 import com.fintech.bank_app.models.Admin;
 import com.fintech.bank_app.models.Customer;
+import com.fintech.bank_app.models.Transaction;
 import com.fintech.bank_app.service.CustomerService;
 import com.fintech.bank_app.service.TransactionService;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @PreAuthorize("hasRole('ADMIN')")
@@ -39,12 +44,14 @@ public class AdminCustomerController {
     private TransactionService transactionService;
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getAllCustomers(@AuthenticationPrincipal Admin admin) {
-        List<CustomerDto> customers = customerService.getAllCustomers(admin)
-            .stream()
-            .map(CustomerMapper::toDto)
-            .toList();
-
+    public ResponseEntity<Page<CustomerDto>> getAllCustomers(
+        @AuthenticationPrincipal Admin admin,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+        ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Customer> customersPage = customerService.getAllCustomers(admin, pageable);
+        Page<CustomerDto> customers = customersPage.map(CustomerMapper::toDto);
         return ResponseEntity.ok(customers);
     }
 
@@ -56,13 +63,16 @@ public class AdminCustomerController {
     }
 
     @GetMapping("{id}/transactions")
-    public ResponseEntity<List<TransactionDto>> getCustomerTransactions(@PathVariable Long id, @AuthenticationPrincipal Admin admin) {
-        List<TransactionDto> transactions = transactionService.getTransactionsByCustomerId(id, admin)
-            .stream()
-            .map(TransactionMapper::toDto)
-            .toList();
-
-        return ResponseEntity.ok(transactions);
+    public ResponseEntity<Page<TransactionDto>> getCustomerTransactions(
+        @PathVariable Long id,
+        @AuthenticationPrincipal Admin admin,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+        ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("timestamp").descending());
+        Page<Transaction> transactionsPage = transactionService.getTransactionsByCustomerId(id, admin, pageable);
+        Page<TransactionDto> dtoPage = transactionsPage.map(TransactionMapper::toDto);
+        return ResponseEntity.ok(dtoPage);
     }
 
     @PatchMapping("{id}")
