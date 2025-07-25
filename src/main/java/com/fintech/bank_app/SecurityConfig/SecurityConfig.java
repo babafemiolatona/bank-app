@@ -23,6 +23,9 @@ public class SecurityConfig {
     @Autowired
     private CustomAuthEntryPoint authenticationEntryPoint;
 
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -44,6 +47,7 @@ public class SecurityConfig {
             )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
             )
 
             .sessionManagement(sess -> sess
