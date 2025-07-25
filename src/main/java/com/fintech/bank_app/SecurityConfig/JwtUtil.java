@@ -19,7 +19,9 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
+    }
 
     public String generateToken(UserDetails userDetails) {
 
@@ -33,13 +35,13 @@ public class JwtUtil {
             .claim("role", role)
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
             .compact();
     }
 
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(Base64.getDecoder().decode(secretKey))
+            .setSigningKey(getSigningKey())
             .build()
             .parseClaimsJws(token)
             .getBody()
@@ -48,7 +50,7 @@ public class JwtUtil {
 
     public String extractRole(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(Base64.getDecoder().decode(secretKey))
+            .setSigningKey(getSigningKey())
             .build()
             .parseClaimsJws(token)
             .getBody()
@@ -62,7 +64,7 @@ public class JwtUtil {
 
     private boolean isTokenExpired(String token) {
         Date expiration = Jwts.parserBuilder()
-            .setSigningKey(Base64.getDecoder().decode(secretKey))
+            .setSigningKey(getSigningKey())
             .build()
             .parseClaimsJws(token)
             .getBody()
