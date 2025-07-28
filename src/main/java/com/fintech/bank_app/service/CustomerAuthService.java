@@ -20,9 +20,13 @@ import com.fintech.bank_app.SecurityConfig.JwtUtil;
 import com.fintech.bank_app.exceptions.InvalidCredentialsException;
 import com.fintech.bank_app.exceptions.UserAlreadyExistsException;
 import com.fintech.bank_app.mapper.CustomerMapper;
+import com.fintech.bank_app.models.Admin;
 import com.fintech.bank_app.models.Customer;
 import com.fintech.bank_app.Dto.ApiResponse;
 import com.fintech.bank_app.Dto.BalanceResponse;
+import com.fintech.bank_app.Dto.ChangePasswordRequest;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class CustomerAuthService {
@@ -81,5 +85,42 @@ public class CustomerAuthService {
             customer.getAccountType(),
             customer.getAccountBalance()
         );
+    }
+
+    @Transactional
+    public ApiResponse changePassword(ChangePasswordRequest request, UserDetails userDetails){
+        if (!passwordEncoder.matches(request.getOldPassword(), userDetails.getPassword())) {
+            throw new InvalidCredentialsException("Old password is incorrect");
+        }
+
+        if (request.getNewPassword().equals(request.getOldPassword())) {
+            throw new InvalidCredentialsException("New password cannot be the same as old password");
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new InvalidCredentialsException("Passwords do not match");
+        }
+
+        String email = userDetails.getUsername();
+
+        if (userDetails instanceof Customer customer) {
+
+            customer = customerDao.findByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException("Customer not found with email: " + email));
+
+            customer.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            customerDao.save(customer);
+        } else if (userDetails instanceof Admin admin) {
+
+            admin = adminDao.findByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException("Admin not found with email: " + email));
+
+            admin.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            adminDao.save(admin);
+        } else {
+            throw new IllegalStateException("Unsupported user type for password change");
+        }
+
+        return new ApiResponse(true, "Password updated successfully");
     }
 }

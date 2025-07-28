@@ -23,7 +23,7 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
-        ApiResponse errorResponse = new ApiResponse(false, "Unauthorized");
+        ApiResponse errorResponse = new ApiResponse(false, "User not authenticated");
         response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 }
