@@ -38,3 +38,11 @@ com.fintech.bank_app
 - **Maven**
 + **Lombok**
 - **SpringDoc OpenAPI (Swagger UI)**
+
+## Authentication and Roles
+* **JWT** tokens used for all secured requests.
++ Login endpoint returns a token to be used in Authorization: Bearer <token> header.
+- @AuthenticationPrincipal used to access logged-in user.
++ **Roles**:
+  - **ROLE_CUSTOMER**: Can make transactions
+  + **ROLE_ADMIN**: Can manage customers, view transactions, delete/update accounts.
