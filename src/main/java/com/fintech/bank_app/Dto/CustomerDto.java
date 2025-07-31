@@ -1,5 +1,6 @@
 package com.fintech.bank_app.Dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ public class CustomerDto {
     private String address;
     private String accountType;
     private String accountNumber;
+    private BigDecimal accountBalance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

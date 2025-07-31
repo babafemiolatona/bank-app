@@ -16,6 +16,7 @@ public class CustomerMapper {
         dto.setPhoneNumber(customer.getPhoneNumber());
         dto.setAddress(customer.getAddress());
         dto.setAccountNumber(customer.getAccountNumber());
+        dto.setAccountBalance(customer.getAccountBalance());
         dto.setAccountType(customer.getAccountType());
         dto.setCreatedAt(customer.getCreatedAt());
         dto.setUpdatedAt(customer.getUpdatedAt());
