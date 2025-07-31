@@ -1,8 +1,5 @@
 package com.fintech.bank_app.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +14,7 @@ import com.fintech.bank_app.exceptions.ResourceNotFoundException;
 import com.fintech.bank_app.models.Customer;
 import com.fintech.bank_app.models.Transaction;
 import com.fintech.bank_app.models.TransactionType;
+import com.fintech.bank_app.utils.TransactionUtil;
 
 @Service
 public class TransferService {
@@ -47,8 +45,8 @@ public class TransferService {
         customerDao.save(sender);
         customerDao.save(recipient);
 
-        Transaction debit = createTransaction(TransactionType.DEBIT, request.getAmount(), request.getDescription(), sender, recipient);
-        Transaction credit = createTransaction(TransactionType.CREDIT, request.getAmount(), request.getDescription(), sender, recipient);
+        Transaction debit = TransactionUtil.createTransaction(TransactionType.DEBIT, request.getAmount(), request.getDescription(), sender, recipient);
+        Transaction credit = TransactionUtil.createTransaction(TransactionType.CREDIT, request.getAmount(), request.getDescription(), sender, recipient);
 
         transactionDao.save(debit);
         transactionDao.save(credit);
@@ -56,18 +54,4 @@ public class TransferService {
         return new ApiResponse(true, "Transfer successful");
     }
 
-    private Transaction createTransaction(
-            TransactionType type, BigDecimal amount, String description,
-            Customer sender, Customer recipient
-    ) {
-        Transaction txn = new Transaction();
-        txn.setType(type);
-        txn.setAmount(amount);
-        txn.setDescription(description);
-        txn.setSourceAccount(sender.getAccountNumber());
-        txn.setDestinationAccount(recipient.getAccountNumber());
-        txn.setTimestamp(LocalDateTime.now());
-        txn.setCustomer(type == TransactionType.DEBIT ? sender : recipient);
-        return txn;
-    }
 }

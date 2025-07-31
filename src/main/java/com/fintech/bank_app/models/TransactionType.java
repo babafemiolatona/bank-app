@@ -1,5 +1,5 @@
 package com.fintech.bank_app.models;
 
 public enum TransactionType {
-    DEBIT, CREDIT;  
+    DEBIT, CREDIT, DEPOSIT;  
 }
