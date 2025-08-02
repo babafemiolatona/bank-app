@@ -92,7 +92,7 @@ The application will start on http://localhost:8080.
 
 - **POST /api/v1/customers/register**: Register a new customer.
 
-- **POST /api/v1/customers/login**: Customer and admin login, returns JWT token.
+- **POST /api/v1/auth/login**: Customer and admin login, returns JWT token.
 
 - **POST /api/v1/admins/register**: Register a new admin.
 
