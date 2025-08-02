@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fintech.bank_app.Dto.ApiResponse;
 import com.fintech.bank_app.Dto.BalanceResponse;
 import com.fintech.bank_app.Dto.CreateCustomerDto;
-import com.fintech.bank_app.Dto.LoginRequest;
-import com.fintech.bank_app.Dto.LoginResponse;
 import com.fintech.bank_app.models.Customer;
 import com.fintech.bank_app.service.CustomerAuthService;
 
@@ -32,12 +30,6 @@ public class CustomerAuthController {
     public ResponseEntity<ApiResponse> registerCustomer(@Valid @RequestBody CreateCustomerDto dto) {
         ApiResponse response = customerAuthService.registerCustomer(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        LoginResponse response = customerAuthService.login(request);
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/me/balance")
