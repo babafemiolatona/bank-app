@@ -43,6 +43,8 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers("/api/v1/admins/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/customers/**").hasRole("CUSTOMER")
+                .requestMatchers("/api/v1/transfer/**").hasRole("CUSTOMER")
+                .requestMatchers("/api/v1/transactions/**").hasRole("CUSTOMER")
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
