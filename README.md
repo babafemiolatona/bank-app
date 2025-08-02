@@ -153,11 +153,11 @@ curl -X POST http://localhost:8080/api/v1/customers/register \
   - **ROLE_ADMIN**: Access to manage customers, view all transactions, and fund accounts.
 
 ## Security
-- Spring Security: Configured with JWT authentication and role-based access control.
+- **Spring Security**: Configured with JWT authentication and role-based access control.
 
-- Password Encoding: Uses BCrypt for secure password storage.
+- **Password Encoding**: Uses BCrypt for secure password storage.
 
-- Custom Handlers: Handles unauthorized access and access-denied scenarios with JSON responses.
+- **Custom Handlers**: Handles unauthorized access and access-denied scenarios with JSON responses.
 
 ## Testing
 - Run unit tests using:
