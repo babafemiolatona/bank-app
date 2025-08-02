@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import com.fintech.bank_app.models.Transaction;
 import com.fintech.bank_app.service.TransactionService;
 
 @RestController
+@PreAuthorize("hasRole('CUSTOMER')")
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
 
