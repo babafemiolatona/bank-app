@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.fintech.bank_app.Dao.CustomerDao;
 import com.fintech.bank_app.Dao.ScheduledTransferDao;
 import com.fintech.bank_app.Dto.ApiResponse;
 import com.fintech.bank_app.Dto.ScheduledTransferRequestDto;
 import com.fintech.bank_app.Dto.TransferRequest;
+import com.fintech.bank_app.exceptions.InvalidRequestException;
 import com.fintech.bank_app.models.Customer;
 import com.fintech.bank_app.models.RecurrenceType;
 import com.fintech.bank_app.models.ScheduledTransfer;
@@ -25,16 +27,37 @@ public class ScheduledTransferService {
     private ScheduledTransferDao transferDao;
 
     @Autowired
+    private CustomerDao customerDao;
+
+    @Autowired
     private TransferService transferService;
 
     public ApiResponse scheduleTransfer(ScheduledTransferRequestDto dto, Customer customer) {
+        if (dto.getScheduledTime().isBefore(LocalDateTime.now())) {
+            return new ApiResponse(false, "Scheduled datetime must be in the future");
+        }
+
+        List<RecurrenceType> validRecurrences = List.of(
+            RecurrenceType.NONE, RecurrenceType.MINUTELY, RecurrenceType.HOURLY,
+            RecurrenceType.DAILY, RecurrenceType.WEEKLY, RecurrenceType.MONTHLY
+        );
+
+        if (!validRecurrences.contains(dto.getRecurrenceType())) {
+            throw new InvalidRequestException("Invalid recurrence type");
+        }
+
+        Customer recipient = customerDao.findByAccountNumber(dto.getAccountNumber())
+            .orElseThrow(() -> new InvalidRequestException("Recipient not found"));
+
+        LocalDateTime scheduledTime = dto.getScheduledTime().withSecond(0).withNano(0);
+
         ScheduledTransfer transfer = new ScheduledTransfer();
         transfer.setCustomer(customer);
-        transfer.setAccountNumber(dto.getAccountNumber());
+        transfer.setAccountNumber(recipient.getAccountNumber());
         transfer.setAmount(dto.getAmount());
         transfer.setDescription(dto.getDescription());
-        transfer.setScheduledTime(dto.getScheduledTime());
-        transfer.setNextExecutionTime(dto.getScheduledTime());
+        transfer.setScheduledTime(scheduledTime);
+        transfer.setNextExecutionTime(scheduledTime);
         transfer.setRecurrenceType(dto.getRecurrenceType());
         transfer.setRemainingOccurrences(dto.getOccurrences());
 
@@ -62,7 +85,6 @@ public class ScheduledTransferService {
                     transfer.getCustomer()
                 );
 
-                // Handle recurrence
                 if (transfer.getRecurrenceType() == RecurrenceType.NONE ||
                     (transfer.getRemainingOccurrences() != null && transfer.getRemainingOccurrences() <= 1)) {
                     transfer.setStatus(ScheduledTransferStatus.COMPLETED);

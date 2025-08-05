@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -68,6 +69,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
         logger.warn("Invalid credentials: {}", ex.getMessage());
         return buildErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<ApiResponse> handleInvalidRequest(InvalidRequestException ex) {
+        logger.warn("Invalid request: {}", ex.getMessage());
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse> handleInvalidEnum(HttpMessageNotReadableException ex) {
+        String rawMessage = ex.getMessage();
+        String message;
+
+        if (rawMessage.contains("RecurrenceType")) {
+            message = "Invalid recurrence type. Accepted values: NONE, MINUTELY, HOURLY, DAILY, WEEKLY, MONTHLY.";
+        } else {
+            message = "Invalid input format. Please check your request payload.";
+        }
+
+        return new ResponseEntity<>(new ApiResponse(false, message), HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<ApiResponse> buildErrorResponse(String message, HttpStatus status) {
