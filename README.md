@@ -9,6 +9,7 @@ A robust Spring Boot backend for a simple banking application. This API simulate
   - **ROLE_ADMIN**: Can manage customers (CRUD operations), view all transactions, and fund customer accounts.
 - **Account Management**: Admins can create, update, and delete customer accounts.
 - **Transfer Operations**: Customers can transfer funds to other accounts with validation for sufficient balance and valid recipients.
+- **Scheduled Transfers**: Schedule one-time or recurring transfers.
 - **Transaction History**: Paginated transaction history for customers and admins.
 - **Swagger UI**: Interactive API documentation and testing via SpringDoc OpenAPI.
 - **Custom Exception Handling**: Graceful error handling with meaningful responses for various scenarios (e.g., insufficient balance, invalid credentials).
@@ -145,6 +146,53 @@ curl -X POST http://localhost:8080/api/v1/customers/register \
   "data": null
 }
 ```
+
+## Scheduled Transfers
+
+Customers can schedule one-time or recurring fund transfers to other accounts. The system supports the following recurrence options:
+
+- **MINUTELY**
+- **HOURLY**
+- **DAILY**
+- **WEEKLY**
+- **MONTHLY**
+- **NONE** (for one-time transfers)
+
+### Create a Scheduled Transfer
+
+**POST /api/v1/scheduled-transfers**
+
+**Request Body:**
+
+```
+{
+  "accountNumber": "8113187140",
+  "amount": 2000,
+  "description": "groceries payment",
+  "scheduledTime": "2025-08-05T21:00:00",
+  "recurrenceType": "DAILY",
+  "occurrences": 5
+}
+```
+
+**Response Example (Success)**:
+
+```
+{
+  "success": true,
+  "message": "Transfer scheduled successfully"
+  "data": null
+}
+```
+
+## How It Works
+-	Transfers are persisted in the **ScheduledTransfer** table.
+-	A **scheduled job** runs every minute (**@Scheduled(fixedRate = 60000)**) and checks for transfers ready to be processed.
+-	On each execution:
+	- Funds are transferred between accounts (with full validation).
+	- A **debit** and **credit** transaction is created and saved.
+	-  **nextExecutionTime** is updated for recurring transfers.
+	-  If **occurrences** run out or an error occurs, the status is updated (**COMPLETED** or **FAILED**).
 
 ## Authentication and Roles
 * **JWT** tokens used for all secured requests: Login endpoint returns a token to be used in **Authorization: Bearer <token> header**. **@AuthenticationPrincipal** used to access logged-in user.
