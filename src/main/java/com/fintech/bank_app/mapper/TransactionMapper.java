@@ -14,6 +14,8 @@ public class TransactionMapper {
         dto.setSourceAccount(tx.getSourceAccount());
         dto.setDestinationAccount(tx.getDestinationAccount());
         dto.setTimestamp(tx.getTimestamp());
+        dto.setCreatedAt(tx.getCreatedAt());
+        dto.setUpdatedAt(tx.getUpdatedAt());
         return dto;
     }
 

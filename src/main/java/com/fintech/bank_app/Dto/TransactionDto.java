@@ -17,5 +17,7 @@ public class TransactionDto {
     private String sourceAccount;
     private String destinationAccount;
     private LocalDateTime timestamp;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 }
