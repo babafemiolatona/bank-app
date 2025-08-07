@@ -1,11 +1,12 @@
 package com.fintech.bank_app.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fintech.bank_app.Dao.AdminDao;
 import com.fintech.bank_app.Dao.CustomerDao;
 import com.fintech.bank_app.Dto.CreateCustomerDto;
@@ -32,6 +33,11 @@ public class CustomerAuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EmailService emailService;
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
     public ApiResponse registerCustomer(CreateCustomerDto dto) {
 
         boolean emailExistsInAdmins = adminDao.findByEmail(dto.getEmail()).isPresent();
@@ -44,6 +50,17 @@ public class CustomerAuthService {
     Customer customer = CustomerMapper.fromDto(dto);
     customer.setPassword(passwordEncoder.encode(dto.getPassword()));
     customerDao.save(customer);
+
+    try {
+        emailService.sendWelcomeEmail(
+        customer.getEmail(),
+        customer.getFirstName() + " " + customer.getLastName(),
+        customer.getAccountNumber(),
+        false
+    );
+    } catch (Exception e) {
+        logger.warn("Failed to send welcome email to {}: {}", customer.getEmail(), e.getMessage());
+    }
 
     return new ApiResponse(true, "Customer registered successfully. Account Number: " + customer.getAccountNumber());
     }

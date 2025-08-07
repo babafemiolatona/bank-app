@@ -71,4 +71,28 @@ public class EmailService {
             type.equals("debited") ? sender.getAccountBalance() : recipient.getAccountBalance()
         );
     }
+
+    public void sendWelcomeEmail(String to, String fullName, String accountNumber, boolean isAdmin) {
+        String subject = "Welcome to BankApp!";
+        String body = String.format("""
+            Dear %s,
+
+            Welcome to BankApp — your secure digital banking platform!
+
+            Your %s account has been successfully created.
+            Your account number is: %s
+
+            You can now log in and start managing your finances.
+
+            If you did not initiate this registration, please contact support immediately.
+
+            — BankApp Team
+            """, fullName, isAdmin ? "admin" : "customer", accountNumber);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
+    }
 }
