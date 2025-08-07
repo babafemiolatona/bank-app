@@ -54,17 +54,8 @@ public class TransferService {
         transactionDao.save(debit);
         transactionDao.save(credit);
 
-        emailService.sendTransactionAlert(
-            sender.getEmail(),
-            "Debit Alert",
-            "#" + request.getAmount() + " has been debited from your account. New balance: " + sender.getAccountBalance()
-        );
-
-        emailService.sendTransactionAlert(
-            recipient.getEmail(),
-            "Credit Alert",
-            "#" + request.getAmount() + " has been credited to your account. New balance: " + recipient.getAccountBalance()
-        );
+        emailService.sendDebitAlert(sender, recipient, request);
+        emailService.sendCreditAlert(recipient, sender, request);
 
         return new ApiResponse(true, "Transfer successful");
     }
