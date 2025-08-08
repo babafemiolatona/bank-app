@@ -44,25 +44,32 @@ public class CustomerAuthService {
         boolean emailExistsInCustomers = customerDao.findByEmail(dto.getEmail()).isPresent();
 
         if (emailExistsInAdmins || emailExistsInCustomers) {
-        throw new UserAlreadyExistsException("Email " + dto.getEmail() + " is already in use.");
-    }
+            throw new UserAlreadyExistsException("Email " + dto.getEmail() + " is already in use.");
+        }
 
-    Customer customer = CustomerMapper.fromDto(dto);
-    customer.setPassword(passwordEncoder.encode(dto.getPassword()));
-    customerDao.save(customer);
+        boolean phoneExistsInAdmins = adminDao.findByPhoneNumber(dto.getPhoneNumber()).isPresent();
+        boolean phoneExistsInCustomers = customerDao.findByPhoneNumber(dto.getPhoneNumber()).isPresent();
 
-    try {
-        emailService.sendWelcomeEmail(
-        customer.getEmail(),
-        customer.getFirstName() + " " + customer.getLastName(),
-        customer.getAccountNumber(),
-        false
-    );
-    } catch (Exception e) {
-        logger.warn("Failed to send welcome email to {}: {}", customer.getEmail(), e.getMessage());
-    }
+        if (phoneExistsInAdmins || phoneExistsInCustomers) {
+            throw new UserAlreadyExistsException("Phone number " + dto.getPhoneNumber() + " is already in use.");
+        }
 
-    return new ApiResponse(true, "Customer registered successfully. Account Number: " + customer.getAccountNumber());
+        Customer customer = CustomerMapper.fromDto(dto);
+        customer.setPassword(passwordEncoder.encode(dto.getPassword()));
+        customerDao.save(customer);
+
+        try {
+            emailService.sendWelcomeEmail(
+            customer.getEmail(),
+            customer.getFirstName() + " " + customer.getLastName(),
+            customer.getAccountNumber(),
+            false
+        );
+        } catch (Exception e) {
+            logger.warn("Failed to send welcome email to {}: {}", customer.getEmail(), e.getMessage());
+        }
+
+        return new ApiResponse(true, "Customer registered successfully. Account Number: " + customer.getAccountNumber());
     }
 
     public BalanceResponse getBalance(Customer customer) {

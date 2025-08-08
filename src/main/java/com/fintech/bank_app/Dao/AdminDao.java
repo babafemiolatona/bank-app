@@ -7,5 +7,6 @@ import com.fintech.bank_app.models.Admin;
 public interface AdminDao extends JpaRepository<Admin, Long> {
     
     Optional<Admin> findByEmail(String email);
+    Optional<Admin> findByPhoneNumber(String phoneNumber);
     
 }
