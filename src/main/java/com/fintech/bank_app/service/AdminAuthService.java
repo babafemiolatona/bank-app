@@ -33,6 +33,17 @@ public class AdminAuthService {
             throw new UserAlreadyExistsException("Email " + dto.getEmail() + " is already in use.");
         }
 
+        boolean phoneExistsInAdmins = adminDao.findByPhoneNumber(dto.getPhoneNumber()).isPresent();
+        boolean phoneExistsInCustomers = customerDao.findByPhoneNumber(dto.getPhoneNumber()).isPresent();
+        
+        if (phoneExistsInAdmins || phoneExistsInCustomers) {
+            throw new UserAlreadyExistsException("Phone number " + dto.getPhoneNumber() + " is already in use.");
+        }
+
+        if (!dto.getPhoneNumber().matches("^0[789][01]\\d{8}$")) {
+            throw new UserAlreadyExistsException("Invalid phone number format. It should start with 07, 08, or 09 and be 11 digits long.");
+        }
+
         Admin admin = AdminMapper.fromDto(dto);
         admin.setPassword(passwordEncoder.encode(dto.getPassword()));
         adminDao.save(admin);

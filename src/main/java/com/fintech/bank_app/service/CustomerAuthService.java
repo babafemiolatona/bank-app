@@ -54,6 +54,10 @@ public class CustomerAuthService {
             throw new UserAlreadyExistsException("Phone number " + dto.getPhoneNumber() + " is already in use.");
         }
 
+        if (!dto.getPhoneNumber().matches("^0[789][01]\\d{8}$")) {
+            throw new InvalidCredentialsException("Invalid phone number format. It should start with 07, 08, or 09 and be 11 digits long.");
+        }
+
         Customer customer = CustomerMapper.fromDto(dto);
         customer.setPassword(passwordEncoder.encode(dto.getPassword()));
         customerDao.save(customer);

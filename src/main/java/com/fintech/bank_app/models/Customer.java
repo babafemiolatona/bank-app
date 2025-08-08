@@ -18,6 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Entity
@@ -33,7 +34,8 @@ public class Customer implements UserDetails {
     private LocalDate dateOfBirth;
     private String email;
 
-    @Column(unique = true, nullable = false)
+    @Pattern(regexp = "^0[789][01]\\d{8}$", message = "Invalid phone number format")
+    @Column(unique = true, length = 11, nullable = false)
     private String phoneNumber;
 
     private String address;
