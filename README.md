@@ -12,6 +12,9 @@ A robust Spring Boot backend for a simple banking application. This API simulate
 - **Scheduled Transfers**: Schedule one-time or recurring transfers.
 - **Transaction History**: Paginated transaction history for customers and admins.
 - **Swagger UI**: Interactive API documentation and testing via SpringDoc OpenAPI.
+- **Email Notifications**: Automated emails for:
+  - Welcome messages on successful registration (with account number for customers)
+  - Credit/Debit alerts after transactions
 - **Custom Exception Handling**: Graceful error handling with meaningful responses for various scenarios (e.g., insufficient balance, invalid credentials).
 
 ## Project Structure
